@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 import { generateTokenAndSetCookie } from '../utils/generateToken.js';
 import { sendVerificationEamil } from '../middlewares/auth.middleware.js';
 import { senWelcomeEmail } from "../middlewares/auth.middleware.js";
-export const signup = async (req, res) => {
+export const signup = async (req, res) => { 
     try {
         const {name, email, password} = req.body;
 
@@ -12,8 +12,8 @@ export const signup = async (req, res) => {
             return res.status(400).json({error:"Email is not in correct format"});
         }
 
-        if(password.length < 6){
-            return res.status(400).json({error:"Password must be atleast 6 characters long"});
+        if(password.length < 8){
+            return res.status(400).json({error:"Password must be atleast 8 characters long"});
         }
 
         if(!name || !email || !password){
@@ -30,7 +30,6 @@ export const signup = async (req, res) => {
 
         
         const verficationToken= Math.floor(100000 + Math.random() * 900000).toString()
-
         const newUser = new User({
             name,
             email, 
@@ -39,12 +38,19 @@ export const signup = async (req, res) => {
             verficationTokenExpiresAt:Date.now() + 24 * 60 * 60 * 1000
         });
 
+        const isEmailSent = await sendVerificationEamil(newUser.email,verficationToken)
+
+        if (!isEmailSent.success) {
+            return res.status(500).json({ error: "Failed to send verification email. Please try again." });
+        }
+        
+        
+
         if(newUser){
             generateTokenAndSetCookie(newUser._id,res);
             await newUser.save();
 
             console.log("newUser",newUser);
-            await sendVerificationEamil(newUser.email,verficationToken)
             res.status(201).json({
                 _id:newUser._id,
                 name:newUser.name,
@@ -70,6 +76,8 @@ export const login = async (req, res) => {
             return res.status(400).json({ error: "Invalid credentials" });
           }
           const isPasswordCorrect = await bcrypt.compare(password, user.password);
+          console.log(password);
+          
         // const isPasswordCorrect = user && await bcrypt.compare(password, user.password);
 
         if(!isPasswordCorrect){
@@ -93,7 +101,7 @@ export const login = async (req, res) => {
 }
 
 
-export const logout= async (req, res) => {
+export const logout= async (req, res, next) => {
     try {
         const name = req.user?.name || "Unknown User";
         console.log(`${name} logged out successfully`);
@@ -106,21 +114,22 @@ export const logout= async (req, res) => {
 }
 
 
-export const getMe = async (req, res) => {
+export const getMe = async (req, res,next) => {
     try {
-        const user = await User.findById(req.user._id).select("-password"); //select("-password") is used to exclude password from the response
-        const ratings = user.ratings || [];
-        const totalScore = ratings.reduce((sum, rating) => sum + (rating.score || 0), 0);
-        const averageRating = ratings.length > 0 ? (totalScore / ratings.length).toFixed(2) : 0;
-        res.status(200).json({
-            _id:user._id,
-            name:user.name,
-            email:user.email,
-            isVerified:user.isVerified,
-            ratings: user.averageRating.toFixed(1),
-            averageRating
-        });
-        // res.status(200).json({user:req.user});  
+        // const user = await User.findById(req.user._id).select("-password"); //select("-password") is used to exclude password from the response
+        // const ratings = user.ratings || [];
+        // const totalScore = ratings.reduce((sum, rating) => sum + (rating.score || 0), 0);
+        // const averageRating = ratings.length > 0 ? (totalScore / ratings.length).toFixed(2) : 0;
+        // res.status(200).json({
+        //     _id:user._id,
+        //     name:user.name,
+        //     email:user.email,
+        //     isVerified:user.isVerified,
+        //     ratings: user.averageRating.toFixed(1),
+        //     averageRating
+        // });
+        res.status(200).json({user:req.user});  
+        
     } catch (error) {
         console.log("Error in getMe controller: ");
         res.status(500).json({error:"Internal server error"});

@@ -4,17 +4,17 @@ import { transporter } from "../utils/email.config.js";
 import { Verification_Email_Template,Welcome_Email_Template } from "../utils/emailTemplate.js";
 export const protectRoute = async (req, res, next) => {
   try {
-      const token = req.cookies.jwt;
+      const token = req.cookies.jwt || req.headers.authorization?.split(" ")[1] || req.cookies.token;
       console.log(token);
       if (!token) return res.status(401).json({ error: "Not authenticated" });
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       req.user = await User.findById(decoded.userId).select("-password");
-      console.log(req.user);
-      console.log(decoded.exp)
+      console.log("user",req.user);
+      console.log("decoded",decoded.exp)
       if (!req.user) return res.status(404).json({ error: "User not found" });
 
-      next();
+      return next();
   } catch (error) {
       console.error("Auth error:", error);
       res.status(401).json({ error: "Invalid token" });
@@ -33,8 +33,10 @@ export const sendVerificationEamil=async(email,verificationCode)=>{
           html: Verification_Email_Template.replace("{verificationCode}",verificationCode)
       })
       console.log('Email send Successfully',response)
+      return {success:true}
   } catch (error) {
-      console.log('Email error',error)
+      console.log('Verification Email error',error)
+      return {success:false,message:error.message}
   }
 }
 
@@ -50,6 +52,6 @@ export const senWelcomeEmail=async(email,name)=>{
       })
       console.log('Email send Successfully',response)
   } catch (error) {
-      console.log('Email error',error)
+      console.log('Welcome Email error',error)
   }
 }

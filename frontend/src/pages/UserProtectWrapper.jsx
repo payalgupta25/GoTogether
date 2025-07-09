@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 
 const UserProtectWrapper = ({ children }) => {
     const navigate = useNavigate();
@@ -21,6 +22,7 @@ const UserProtectWrapper = ({ children }) => {
                 }
             } catch (error) {
                 console.error('Not authenticated:', error);
+                toast.error('Not authenticated');
                 navigate('/login'); // ✅ Redirect to login if not authenticated
             } finally {
                 setLoading(false);

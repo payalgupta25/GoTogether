@@ -33,7 +33,6 @@ const UserLogin = () => {
       if(password.length < 8){
         return toast.error("Password must be at least 8 characters long");
       }else{
-
         return toast.error(error.message);
       }
     }
