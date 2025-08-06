@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { UserDataContext } from "../context/UserContext";
 import axios from "axios";
-import {toast} from 'react-hot-toast';
+import { toast } from "react-hot-toast";
 
 const UserLogin = () => {
   const [email, setEmail] = useState("");
@@ -17,23 +17,21 @@ const UserLogin = () => {
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/api/auth/login`,
-        userData,{
-          withCredentials: true
-        }
+        userData,
+        { withCredentials: true }
       );
       if (response.status === 200) {
         const data = response.data;
         setUser(data.user);
-        // localStorage.setItem("token", data.token);
         navigate("/home");
         return toast.success("Login successful!");
       }
     } catch (error) {
       console.error("Login Error:", error);
-      if(password.length < 8){
+      if (password.length < 8) {
         return toast.error("Password must be at least 8 characters long");
-      }else{
-        return toast.error(error.message);
+      } else {
+        return toast.error("Login failed. Check your credentials.");
       }
     }
     setEmail("");
@@ -41,41 +39,48 @@ const UserLogin = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
-      <div className="bg-white p-8 rounded-xl shadow-xl w-full max-w-md">
-        <h2 className="text-3xl font-bold text-gray-900 text-center mb-4">Welcome Back!</h2>
-        <form onSubmit={submitHandler} className="space-y-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#0f0f10] px-4">
+      <div className="w-full max-w-md bg-[#1c1c1e]/90 border border-[#2a2a2e] backdrop-blur-md rounded-xl shadow-lg p-8">
+        <h2 className="text-3xl font-bold text-gray-100 text-center mb-6">Welcome Back</h2>
+        
+        <form onSubmit={submitHandler} className="space-y-6">
           <div>
-            <label className="block text-sm font-semibold text-gray-900">Email</label>
+            <label className="block text-sm font-medium text-gray-300 mb-1">Email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full p-3 border rounded-lg bg-gray-100 text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-700"
-              placeholder="email@example.com"
+              className="w-full px-4 py-3 rounded-lg bg-[#2a2a2e] border border-[#333] text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#3a3f94]"
+              placeholder="you@example.com"
             />
           </div>
+
           <div>
-            <label className="block text-sm font-semibold text-gray-900">Password</label>
+            <label className="block text-sm font-medium text-gray-300 mb-1">Password</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full p-3 border rounded-lg bg-gray-100 text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-700"
-              placeholder="Enter your password"
+              className="w-full px-4 py-3 rounded-lg bg-[#2a2a2e] border border-[#333] text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#2a7a73]"
+              placeholder="••••••••"
             />
           </div>
+
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white font-bold py-3 rounded-lg shadow-md hover:bg-blue-700 transition"
+            className="w-full bg-gradient-to-r from-[#3a3f94] to-[#2a7a73] text-white font-semibold py-3 rounded-lg shadow-md hover:opacity-90 transition"
           >
             Login
           </button>
         </form>
-        <p className="text-center text-sm mt-4 text-gray-900">
-          New here? <Link to="/signup" className="text-blue-600 font-bold">Create an account</Link>
+
+        <p className="text-center text-sm mt-6 text-gray-400">
+          New here?{" "}
+          <Link to="/signup" className="text-[#4fd1c5] font-medium hover:underline">
+            Create an account
+          </Link>
         </p>
       </div>
     </div>
