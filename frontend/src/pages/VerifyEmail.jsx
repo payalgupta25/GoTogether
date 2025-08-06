@@ -1,56 +1,59 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-hot-toast";
+import { MailCheck, Loader2 } from "lucide-react";
 
 const VerifyEmail = () => {
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
   const handleVerify = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage("");
     try {
       const res = await axios.post("http://localhost:5000/api/auth/verifyEmail", { code });
       if (res.data.success) {
-        setMessage(res.data.message);
-        setTimeout(() => navigate("/home"), 2000); // Redirect to home after 2 sec
-        return toast.success(res.data.message);
+        toast.success(res.data.message);
+        setTimeout(() => navigate("/vehicle-info"), 2000);
       } else {
-        // setMessage(res.data.message);
-        return toast.error("Invalid verification code.");
+        toast.error("Invalid verification code.");
       }
     } catch (error) {
-      setMessage("Something went wrong. Please try again.");
-    //    toast.error("Something went wrong. Please try again.");
+      toast.error("Something went wrong. Please try again.");
     }
     setLoading(false);
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-        <h2 className="text-2xl font-semibold text-center mb-4">Verify Your Email</h2>
-        <form onSubmit={handleVerify} className="flex flex-col space-y-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#0b0b0b] px-4">
+      <div className="w-full max-w-md bg-[#1a1a1a] text-white p-8 rounded-2xl shadow-lg border border-[#2a2a2a]">
+        <div className="flex justify-center mb-5">
+          <MailCheck className="w-8 h-8 text-blue-500" />
+        </div>
+        <h2 className="text-2xl font-bold text-center mb-2">Verify Your Email</h2>
+        <p className="text-sm text-center text-gray-400 mb-6">Enter the code sent to your email</p>
+
+        <form onSubmit={handleVerify} className="space-y-4">
           <input
             type="text"
-            placeholder="Enter verification code"
+            placeholder="6-digit Code"
             value={code}
+            maxLength={6}
             onChange={(e) => setCode(e.target.value)}
-            className="border p-2 rounded-md"
+            className="w-full p-3 rounded-md bg-[#2a2a2a] text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
           <button
             type="submit"
-            className="bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
             disabled={loading}
+            className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-500 to-teal-400 text-white py-2.5 rounded-md font-medium hover:opacity-90 transition disabled:opacity-50"
           >
+            {loading && <Loader2 className="animate-spin w-5 h-5" />}
             {loading ? "Verifying..." : "Verify Email"}
           </button>
         </form>
-        {/* {message && <p className="text-center text-red-500 mt-2">{message}</p>} */}
       </div>
     </div>
   );
