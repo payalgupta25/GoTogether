@@ -66,7 +66,6 @@ export const signup = async (req, res) => {
     }
 } 
 
-
 export const login = async (req, res) => {
     try {
 
@@ -100,7 +99,6 @@ export const login = async (req, res) => {
     }
 }
 
-
 export const logout= async (req, res, next) => {
     try {
         const name = req.user?.name || "Unknown User";
@@ -113,28 +111,54 @@ export const logout= async (req, res, next) => {
     }
 }
 
-
-export const getMe = async (req, res,next) => {
-    try {
-        // const user = await User.findById(req.user._id).select("-password"); //select("-password") is used to exclude password from the response
-        // const ratings = user.ratings || [];
-        // const totalScore = ratings.reduce((sum, rating) => sum + (rating.score || 0), 0);
-        // const averageRating = ratings.length > 0 ? (totalScore / ratings.length).toFixed(2) : 0;
-        // res.status(200).json({
-        //     _id:user._id,
-        //     name:user.name,
-        //     email:user.email,
-        //     isVerified:user.isVerified,
-        //     ratings: user.averageRating.toFixed(1),
-        //     averageRating
-        // });
-        res.status(200).json({user:req.user});  
+// export const getMe = async (req, res,next) => {
+//     try {
+//         // const user = await User.findById(req.user._id).select("-password"); //select("-password") is used to exclude password from the response
+//         // const ratings = user.ratings || [];
+//         // const totalScore = ratings.reduce((sum, rating) => sum + (rating.score || 0), 0);
+//         // const averageRating = ratings.length > 0 ? (totalScore / ratings.length).toFixed(2) : 0;
+//         // res.status(200).json({
+//         //     _id:user._id,
+//         //     name:user.name,
+//         //     email:user.email,
+//         //     isVerified:user.isVerified,
+//         //     ratings: user.averageRating.toFixed(1),
+//         //     averageRating
+//         // });
+//         res.status(200).json({user:req.user});  
         
-    } catch (error) {
-        console.log("Error in getMe controller: ");
-        res.status(500).json({error:"Internal server error"});
-    }
-}
+//     } catch (error) {
+//         console.log("Error in getMe controller: ");
+//         res.status(500).json({error:"Internal server error"});
+//     }
+// }
+
+export const getMe = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id).select("-password");
+
+    const ratings = user.ratings || [];
+    const totalScore = ratings.reduce((sum, r) => sum + (r.score || 0), 0);
+    const averageRating = ratings.length > 0 ? (totalScore / ratings.length).toFixed(1) : 0;
+
+    res.status(200).json({
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        isVerified: user.isVerified,
+        vehicle: user.vehicle,
+        averageRating: parseFloat(averageRating),
+      }
+    });
+
+  } catch (error) {
+    console.log("Error in getMe controller:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
 
 export const verifyEmail = async (req, res) => {
     try {
@@ -159,3 +183,42 @@ export const verifyEmail = async (req, res) => {
         return res.status(400).json({success:false,message:"internal server error"})
     }
 }
+
+export const vehicleInfo = async (req, res) => {
+  try {
+    const {email, numberPlate, vehicleType , fuelType  } = req.body;
+
+    const user = await User.findOne({ email }); // or use _id if you send it
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    user.vehicle = {
+      numberPlate,
+      type: vehicleType,
+      fuel:fuelType,
+    };
+
+    await user.save();
+
+    return res.status(200).json({ success: true, message: "Vehicle info saved successfully" });
+  } catch (err) {
+    console.error("Vehicle info save error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// GET /api/users/carbon-stats
+export const getCarbonStats = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select("carbonSaved name email");
+    res.status(200).json({ 
+      carbonSaved: user.carbonSaved.toFixed(2), 
+      name: user.name 
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Unable to fetch carbon data" });
+  }
+};
+
+

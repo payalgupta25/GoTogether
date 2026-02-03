@@ -11,11 +11,7 @@ const rideSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-    vehicle: {
-        type: String,
-        required: true,
-        trim: true
-    },
+    
     isConfirmed: {
         type: Boolean,
         default: false,  // Initially, the ride is unconfirmed
@@ -27,15 +23,10 @@ const rideSchema = new mongoose.Schema({
     numberOfMembers: {
         type: Number,
         required: true,
-        min: 1,
+        min: 0,
         max: 4
     },
-    numberPlate: {
-        type: String,
-        required: true,
-        trim: true,
-        uppercase: true
-    },
+    
     date: {
         type: Date,
         required: true
@@ -78,11 +69,15 @@ const rideSchema = new mongoose.Schema({
         ref: "User",
         default: []
     },
-    fuelType: {
-        type: String,
-        enum: ["Petrol", "Diesel", "Electric"],
-        required: true
+    distance: {
+        type: Number, // in kilometers
+        required: false // will be filled after hitting API
     },
+    duration: {
+        type: String, // in minutes
+        required: false // will be filled after hitting API
+    },
+    
 },
 {
     timestamps: true

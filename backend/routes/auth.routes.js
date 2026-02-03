@@ -1,5 +1,5 @@
 import express from 'express';  
-import {getMe, signup, login, logout , verifyEmail } from '../controllers/auth.controller.js';
+import {getMe, signup, login, logout , verifyEmail , vehicleInfo, getCarbonStats} from '../controllers/auth.controller.js';
 import { protectRoute } from '../middlewares/auth.middleware.js';
 const router = express.Router();
 
@@ -8,5 +8,7 @@ router.get('/me',protectRoute, getMe); //protectRoute is a middleware to check i
 router.post('/login', login);
 router.post('/logout',protectRoute, logout);
 router.post('/verifyEmail', verifyEmail);
+router.post('/vehicleInfo', vehicleInfo);
+router.get("/carbon-stats", protectRoute, getCarbonStats);
 
 export default router;

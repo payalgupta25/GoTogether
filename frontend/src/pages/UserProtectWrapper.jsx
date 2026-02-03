@@ -11,6 +11,11 @@ const UserProtectWrapper = ({ children }) => {
     useEffect(() => {
         const checkAuth = async () => {
             try {
+                // TEMPORARY: Skip auth check for demo purposes
+                setAuthenticated(true);
+                setLoading(false);
+                return;
+                
                 const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/auth/me`, {
                     withCredentials: true
                 });

@@ -1,33 +1,68 @@
-import express from "express"
-import dotenv from "dotenv"
+import express from "express";
+import dotenv from "dotenv";
 import { connectDB } from "./db/db.js";
-import authRoutes from "./routes/auth.routes.js"
-import rideRoutes from "./routes/rides.routes.js"
-import sosRoutes from "./routes/sos.routes.js"
+import authRoutes from "./routes/auth.routes.js";
+import rideRoutes from "./routes/rides.routes.js";
+import sosRoutes from "./routes/sos.routes.js";
+import mapRoutes from "./routes/maps.routes.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import {Server} from "socket.io";
+import http from "http";
 
 dotenv.config();
-const app=express()
+const app = express();
+const server = http.createServer(app); // 👈 wrap express app into http server
 
+// CORS configuration
+const corsOptions = {
+  origin: "http://localhost:5173",
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+};
+
+// Setup Socket.IO on the HTTP server with matching CORS
+const io = new Server(server, {
+  cors: corsOptions,
+  allowEIO3: true
+});
+
+// Basic WebSocket connection
+io.on("connection", (socket) => {
+  console.log("A user connected:", socket.id);
+
+  socket.on("sendLocation", ({ rideId, lat, lon }) => {
+    console.log(`Live location for ride ${rideId}:`, lat, lon);
+
+    // Broadcast it to others if needed:
+    io.emit("locationUpdate", { rideId, lat, lon });
+
+    // OR: Save to DB
+    // await Ride.findByIdAndUpdate(rideId, { currentLocation: { lat, lon } });
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected:", socket.id);
+  });
+});
+
+
+
+// Express middleware
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(
-    cors({
-        origin: "http://localhost:5173", // Your frontend URL
-        credentials: true, // Allow cookies
-    })
-);
+app.use(cors(corsOptions));
 
-
-app.use('/api/auth', authRoutes);
-app.use('/api/rides',rideRoutes);
+// API routes
+app.use("/api/auth", authRoutes);
+app.use("/api/rides", rideRoutes);
 app.use("/api/sos", sosRoutes);
+app.use("/api/maps", mapRoutes);
 
-
-const PORT=process.env.PORT;
-app.listen(PORT,()=>{
-    console.log(`Server running on PORT http://localhost:${PORT}`);
-    connectDB();
-})
+// Start server
+const PORT = process.env.PORT || 8000;
+server.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  connectDB();
+});

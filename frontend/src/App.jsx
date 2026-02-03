@@ -12,6 +12,8 @@ import CreateRide from './pages/CreateRide'
 import { Toaster } from 'react-hot-toast'
 import VerifyEmail from './pages/VerifyEmail'
 import Card from './pages/Card'
+import VehicleInfoPage from './pages/VehicleInfoPage'
+import MapComponent from './components/MapComponent'
 
 function App() {
 
@@ -27,6 +29,7 @@ function App() {
         <Route path="/create-ride" element={<CreateRide />} />
         <Route path="/verifyEmail" element={<VerifyEmail />} />
         <Route path="/ride/:id" element={<Card />} />
+        <Route path="/vehicle-info" element={<VehicleInfoPage />} />
       </Routes>
       <Toaster />
     </>
