@@ -14,11 +14,13 @@ import VerifyEmail from './pages/VerifyEmail'
 import Card from './pages/Card'
 import VehicleInfoPage from './pages/VehicleInfoPage'
 import MapComponent from './components/MapComponent'
+import Cursor from './components/Cursor'
 
 function App() {
 
   return (
     <>
+    <Cursor />
       <Routes>
         <Route path="/" element={<Start />} />
         <Route path="/login" element={<UserLogin />} />

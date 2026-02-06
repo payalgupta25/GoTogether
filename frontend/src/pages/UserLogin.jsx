@@ -3,10 +3,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { UserDataContext } from "../context/UserContext";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { FaRegEyeSlash } from "react-icons/fa";
 
 const UserLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [visibility , setVisibility] = useState(false);
   const navigate = useNavigate();
   const { setUser } = useContext(UserDataContext);
 
@@ -54,18 +56,21 @@ const UserLogin = () => {
               className="w-full px-4 py-3 rounded-lg bg-[#2a2a2e] border border-[#333] text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#3a3f94]"
               placeholder="you@example.com"
             />
+
+            
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">Password</label>
+          <label className="block text-sm font-medium text-gray-300 mb-1">Password</label>
+          <div className="flex justify-between w-full px-4 py-3 rounded-lg bg-[#2a2a2e] border border-[#333] text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#2a7a73]">
             <input
-              type="password"
+              type= {visibility ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-lg bg-[#2a2a2e] border border-[#333] text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#2a7a73]"
+              className="outline-none bg-transparent"
               placeholder="••••••••"
             />
+            <FaRegEyeSlash size={22} onClick={()=>setVisibility(!visibility)}/>
           </div>
 
           <button

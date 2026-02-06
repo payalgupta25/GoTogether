@@ -1,8 +1,14 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Link } from "react-router-dom";
 import { Car, Users, ShieldCheck } from "lucide-react";
+import gsap from "gsap";
+import { useEffect } from "react";
+import {useGSAP} from '@gsap/react' ;
+import TextReveal from "../hooks/TextReveal";
+import { UseScrollReveal } from "../hooks/UseScrollReveal";
 
 function Start() {
+
   return (
     <div className="min-h-screen w-full flex flex-col bg-[#0f0f10] text-gray-200 font-sans">
       
@@ -24,10 +30,11 @@ function Start() {
       {/* Hero Section */}
       <section className="flex flex-col items-center text-center px-4 sm:px-6 py-12 sm:py-20 max-w-4xl mx-auto">
         <h2 className="text-3xl sm:text-5xl md:text-6xl font-extrabold mb-6 leading-tight tracking-tight text-gray-100">
-          Connect. Ride. Share. 🚘
+          <TextReveal text="Connect. Ride. Share. 🚘" delay={0.2} />
         </h2>
         <p className="text-gray-400 text-base sm:text-lg mb-10 px-2 sm:px-8">
-          Discover a smarter, safer way to move together. Modern carpooling with verified users and sleek experience.
+          {/* Discover a smarter, safer way to move together. Modern carpooling with verified users and sleek experience. */}
+          <TextReveal text="Discover a smarter, safer way to move together. Modern carpooling with verified users and sleek experience." delay={0.4} />
         </p>
         <Link
           to="/signup"
