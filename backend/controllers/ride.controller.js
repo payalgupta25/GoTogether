@@ -18,12 +18,13 @@ export const getAllRides = async (req, res) => {
 
 export const getFilteredRides = async (req, res) => {
     try {
-        const { from, to, date } = req.body;
+        const { from, to, date, womenOnly } = req.body;
         const rides = await Ride.find({ 
             $or: [
                 {from:from},
                 {to:to},
-                {date:date}
+                {date:date},
+                {womenOnly:womenOnly}
             ]
          });
         res.status(200).json(rides);
@@ -58,7 +59,7 @@ export const createRide = async (req, res) => {
     }
 
     // 1. Validate fields early
-    const { from, to, numberOfMembers, date, time, price } = req.body;
+    const { from, to, numberOfMembers, date, time, price, womenOnly } = req.body;
     if (!from || !to || !numberOfMembers || !date || !time || !price) {
       return res.status(400).json({ message: 'All fields are mandatory' });
     }
@@ -84,6 +85,7 @@ export const createRide = async (req, res) => {
       time,
       price,
       distance, // in km
+      womenOnly
     });
 
     const newRide = await ride.save();
@@ -181,7 +183,7 @@ export const rateDriver = async (req, res) => {
 export const confirmRide = async (req, res) => {
     try {
         const rideId = req.params.id;
-        const ride = await Ride.findById(rideId);
+        const ride = await Ride.findById(rideId).populate("driver", "gender");
 
         if (!ride) {
             return res.status(404).json({ message: "Ride not found" });
@@ -194,6 +196,21 @@ export const confirmRide = async (req, res) => {
         if (ride.driver.toString() === req.user._id.toString()) {
             return res.status(400).json({ message: "Driver cannot book their own ride" });
         }
+
+        if (ride.womenOnly) {
+          if (req.user.gender !== "Female") {
+            return res.status(403).json({
+              message: "This ride is for women only"
+            });
+          }
+        }
+
+        if (ride.womenOnly && ride.driver.gender !== "Female") {
+          return res.status(400).json({
+            message: "Women-only rides must have female drivers"
+          });
+        }
+
 
         // Check if the user has already confirmed this ride
         if (ride.passengers.includes(req.user._id)) {

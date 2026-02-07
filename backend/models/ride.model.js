@@ -77,8 +77,13 @@ const rideSchema = new mongoose.Schema({
         type: String, // in minutes
         required: false // will be filled after hitting API
     },
+    womenOnly: {
+      type: Boolean,
+      default: false
+    },
     
 },
+
 {
     timestamps: true
 });

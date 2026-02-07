@@ -45,6 +45,13 @@ const userSchema = new mongoose.Schema({
         }
     },
 
+    gender: {
+        type: String,
+        enum: ["male", "female", "other"],
+        required: true
+    },
+
+
     carbonSaved: {
          type: Number,
         default: 0  // in kg

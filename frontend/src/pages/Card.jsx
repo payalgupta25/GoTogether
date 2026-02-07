@@ -15,6 +15,7 @@ const Card = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
   const [editForm, setEditForm] = useState({
     from: "",
     to: "",
@@ -52,6 +53,22 @@ const Card = () => {
     fetchRide();
   }, [id]);
 
+    useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await axios.get(
+          `${import.meta.env.VITE_BASE_URL}/api/auth/me`,
+          { withCredentials: true }
+        );
+        setCurrentUser(res.data);
+      } catch (err) {
+        console.error("User fetch error", err);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
   const deleteRide = async () => {
     try {
       await axios.delete(`${import.meta.env.VITE_BASE_URL}/api/rides/delete/${id}`, {
@@ -86,6 +103,11 @@ const Card = () => {
   const handleConfirmRide = async () => {
   try {
     setIsLoading(true);
+    if (ride.womenOnly && currentUser?.gender !== "female") {
+      toast.error("This ride is for women only 🚺");
+      setIsLoading(false);
+      return;
+    }
     const res = await axios.post(
       `${import.meta.env.VITE_BASE_URL}/api/rides/confirm/${id}`,
       {},
@@ -164,7 +186,11 @@ return (
           </div>
         </div>
       </div>
-
+      {ride.womenOnly && (
+        <span className="inline-block mt-1 px-2 py-1 text-xs bg-pink-600 text-white rounded-full">
+          🚺 Women Only
+        </span>
+      )}
       {/* Date and Time */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 text-gray-100">
         <div className="flex items-center gap-2">

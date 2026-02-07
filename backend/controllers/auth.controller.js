@@ -5,7 +5,7 @@ import { sendVerificationEamil } from '../middlewares/auth.middleware.js';
 import { senWelcomeEmail } from "../middlewares/auth.middleware.js";
 export const signup = async (req, res) => { 
     try {
-        const {name, email, password} = req.body;
+        const {name, gender, email, password} = req.body;
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if(!emailRegex.test(email)){
@@ -16,7 +16,7 @@ export const signup = async (req, res) => {
             return res.status(400).json({error:"Password must be atleast 8 characters long"});
         }
 
-        if(!name || !email || !password){
+        if(!name || !email || !password || !gender){
             return res.status(400).json({error:"All fields are mandatory"});
         }
 
@@ -34,6 +34,7 @@ export const signup = async (req, res) => {
             name,
             email, 
             password:passwordHash,
+            gender,
             verficationToken,
             verficationTokenExpiresAt:Date.now() + 24 * 60 * 60 * 1000
         });
@@ -55,6 +56,7 @@ export const signup = async (req, res) => {
                 _id:newUser._id,
                 name:newUser.name,
                 email:newUser.email,
+                gender:newUser.gender,
                 newUser
             });
         }else{
