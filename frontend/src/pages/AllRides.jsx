@@ -16,6 +16,8 @@ const AllRides = () => {
   const [selectedDate, setSelectedDate] = useState("");
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
+  const [womenOnly, setWomenOnly] = useState(false);
+
 
   useEffect(() => {
     const fetchRides = async () => {
@@ -42,6 +44,10 @@ const AllRides = () => {
       updated = updated.filter((ride) =>
         ride.from.toLowerCase().includes(from.toLowerCase())
       );
+    }
+
+    if (womenOnly) {
+      updated = updated.filter((ride) => ride.womenOnly === true);
     }
 
     if (to) {
@@ -105,13 +111,26 @@ const AllRides = () => {
     }
 
     setFilteredRides(updated);
-  }, [from, to, maxPrice, minSeats, selectedDate, rides, selectedTimeSlot]);
+  }, [from, to, maxPrice, minSeats, selectedDate, rides, selectedTimeSlot, womenOnly]);
 
   return (
     <div className="min-h-screen bg-[#0f0f10] text-white flex flex-col md:flex-row">
       <div className="hidden md:block w-full md:w-1/4 bg-[#131316] p-6 shadow-lg sticky top-0 h-screen overflow-auto border-r border-[#2c2c2e]">
         <h2 className="text-xl font-semibold mb-4 text-white">Filters</h2>
         <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="womenOnly"
+              checked={womenOnly}
+              onChange={(e) => setWomenOnly(e.target.checked)}
+              className="accent-pink-500 w-4 h-4"
+            />
+            <label htmlFor="womenOnly" className="text-sm text-gray-300">
+              Women Only Rides
+            </label>
+          </div>
+
           <div className="relative">
             <MapPin className="absolute left-3 top-3 text-gray-400" />
             <input

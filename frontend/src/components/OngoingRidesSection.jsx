@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import RateDriverModal from "./RateDriverModal.jsx";
 // import MapComponent from "./MapComponent.jsx"; // ✅ import your map
-import socket from "../socket.js";
+// import socket from "../socket.js";
 import LiveRouteStatusBar from "./LiveRouteStatusBar.jsx";
 const OngoingRidesSection = ({ user, rides = [] }) => {
   const [showModal, setShowModal] = useState(false);

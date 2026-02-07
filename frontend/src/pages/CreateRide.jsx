@@ -13,6 +13,7 @@ const CreateRide = () => {
     date: "",
     time: "",
     price: "",
+    womenOnly: false
   });
 
   const [error, setError] = useState("");
@@ -81,6 +82,21 @@ const CreateRide = () => {
         {error && <p className="text-red-500 text-sm text-center mb-4">{error}</p>}
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="flex items-center gap-2 sm:col-span-2">
+            <input
+              type="checkbox"
+              name="womenOnly"
+              checked={rideDetails.womenOnly}
+              onChange={(e) =>
+                setRideDetails({
+                  ...rideDetails,
+                  womenOnly: e.target.checked,
+                })
+              }
+            />
+            <label>Women Only Ride</label>
+          </div>
+
           {[
             { name: "from", placeholder: "From", type: "text" },
             { name: "to", placeholder: "To", type: "text" },
@@ -89,6 +105,7 @@ const CreateRide = () => {
             { name: "time", placeholder: "Time", type: "time" },
             { name: "price", placeholder: "Price (₹)", type: "number" },
           ].map((field) => (
+            
             <div key={field.name} className="relative">
               <input
                 type={field.type}
@@ -126,7 +143,9 @@ const CreateRide = () => {
                     ))}
                   </ul>
                 )}
+                
             </div>
+            
           ))}
 
           <button

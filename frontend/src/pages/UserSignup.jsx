@@ -10,13 +10,14 @@ const UserSignup = () => {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [visibility , setVisibility] = useState(false);
+  const [gender, setGender] = useState("");
 
   const navigate = useNavigate();
   const { setUser } = useContext(UserDataContext);
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    const newUser = { name, email, password };
+    const newUser = { name, email, password, gender };
 
     try {
       const response = await axios.post(
@@ -56,7 +57,20 @@ const UserSignup = () => {
               placeholder="Your Name"
             />
           </div>
-
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-1">Gender</label>
+            <select
+              value={gender}
+              onChange={(e) => setGender(e.target.value)}
+              required
+              className="w-full px-4 py-3 rounded-lg bg-[#2a2a2e] border border-[#333] text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#3a3f94]"
+            >
+              <option value="">Select Gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1">Email</label>
             <input
