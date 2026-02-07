@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const getAutoCompleteSuggestions = async (input) => {
+export const getAutoCompleteSuggestions = async (input, lat, lon) => {
     if (!input) {
         throw new Error('query is required');
     }
@@ -8,9 +8,8 @@ export const getAutoCompleteSuggestions = async (input) => {
     if (input.length < 3) {
         throw new Error('Must be at least 3 characters long');
     }
-
     const apiKey = "mDO5KfGVfRkA5MEeyU2iRVcCFu3gN6uF";
-    const url = `https://api.tomtom.com/search/2/geocode/${encodeURIComponent(input)}.json?key=${apiKey}`;
+    const url = `https://api.tomtom.com/search/2/geocode/${encodeURIComponent(input)}.json?key=${apiKey}&countrySet=IN&typeahead=true&limit=5&lat=${lat}&lon=${lon}`;
 
     try {
         const response = await axios.get(url);
@@ -27,7 +26,7 @@ export const getAutoCompleteSuggestions = async (input) => {
 
 export const getCoordinates = async (place) => {
   const apiKey = "mDO5KfGVfRkA5MEeyU2iRVcCFu3gN6uF";
-  const url = `https://api.tomtom.com/search/2/geocode/${encodeURIComponent(place)}.json?key=${apiKey}`;
+  const url = `https://api.tomtom.com/search/2/geocode/${encodeURIComponent(place)}.json?key=${apiKey}&countrySet=IN`;
     console.log("url", url);
     
   try {
@@ -43,7 +42,7 @@ export const getCoordinates = async (place) => {
     }
 
     return {
-      lng: position.lon,
+      lon: position.lon,
       lat: position.lat,
     };
   } catch (err) {

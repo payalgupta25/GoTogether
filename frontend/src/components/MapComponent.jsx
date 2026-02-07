@@ -18,9 +18,11 @@ const MapComponent = ({ from, to }) => {
     // Get coordinates for both from and to
     const fetchCoords = async () => {
       try {
-        const { fromCoords, toCoords } = await getCoordinates(from, to);
-        setFromCoords(fromCoords);
-        setToCoords(toCoords);
+        const fromResult = await getCoordinates(from);
+        const toResult = await getCoordinates(to);
+
+        setFromCoords([fromResult.lon, fromResult.lat]);
+        setToCoords([toResult.lon, toResult.lat]);
       } catch (error) {
         toast.error("Failed to fetch coordinates.");
         console.error(error);

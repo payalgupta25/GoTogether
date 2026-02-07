@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
@@ -17,6 +17,22 @@ const CreateRide = () => {
 
   const [error, setError] = useState("");
   const [suggestions, setSuggestions] = useState({ from: [], to: [] });
+  const [userLocation, setUserLocation] = useState({lat: null, lon: null});
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setUserLocation({
+          lat: pos.coords.latitude,
+          lon: pos.coords.longitude,
+        });
+      },
+      (err) => {
+        console.error("Location permission denied:", err);
+      }
+    );
+  }, []);
+
 
   const handleChange = (e) => {
     setRideDetails({ ...rideDetails, [e.target.name]: e.target.value });
@@ -47,7 +63,7 @@ const CreateRide = () => {
 
     if (value.length >= 3) {
       try {
-        const result = await getAutoCompleteSuggestions(value);
+        const result = await getAutoCompleteSuggestions(value, userLocation.lat, userLocation.lon);
         setSuggestions((prev) => ({ ...prev, [name]: result }));
       } catch (err) {
         console.error("Suggestion error:", err.message);

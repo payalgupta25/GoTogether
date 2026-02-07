@@ -70,8 +70,8 @@ export const createRide = async (req, res) => {
     
     // 3. Calculate distance
     const distance = await calculateDistance(
-      start.lng, start.lat,
-      destination.lng, destination.lat
+      start.lon, start.lat,
+      destination.lon, destination.lat
     );
 
     // 4. Create ride with distance
@@ -328,7 +328,7 @@ export const calculateDistance = async (fromLng, fromLat, toLng, toLat) => {
   try {
     const response = await axios.get(url);
     const route = response.data.routes[0];
-
+    console.log("TomTom Raw Response:", JSON.stringify(response.data, null, 2));
     if (!route || !route.summary || typeof route.summary.lengthInMeters !== "number") {
       console.error("Invalid route summary:", route);
       throw new Error("Distance information missing in route");

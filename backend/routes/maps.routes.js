@@ -9,7 +9,7 @@ router.get('/get-suggestions', protectRoute, async (req, res) => {
             const { input } = req.query;
             // console.log(input);
             
-            const suggestions = await getAutoCompleteSuggestions(input);
+            const suggestions = await getAutoCompleteSuggestions(input, req.userLocation.lat, req.userLocation.lon);
             res.status(200).json(suggestions);
         } catch (err) {
             console.error(err);
