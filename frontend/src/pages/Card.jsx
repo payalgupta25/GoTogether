@@ -222,7 +222,7 @@ return (
                   className="flex items-center gap-3 bg-green-100 px-4 py-2 rounded-2xl max-w-xs w-fit"
                 >
                   <User className="w-5 h-5 text-green-600" />
-                  <span className="font-medium">{p.name}</span>
+                  <span className="font-medium text-green-600">{p.name}</span>
                 </div>
               ))
             ) : (
