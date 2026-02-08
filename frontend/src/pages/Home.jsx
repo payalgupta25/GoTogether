@@ -4,8 +4,14 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import OngoingRidesSection from "../components/OngoingRidesSection.jsx";
 import useGeoLocation from "../hooks/useGeoLocation.js";
+import TextReveal from "../hooks/TextReveal.jsx";
+import { UseScrollReveal } from "../hooks/UseScrollReveal.jsx";
 
 const Home = () => {
+
+  const featureRef = React.useRef(null);
+  UseScrollReveal(featureRef) ;
+
   const [modal, setModal] = useState(false);
   // const [location, setLocation] = useState({ latitude: null, longitude: null });
   const [ongoingRides, setOngoingRides] = useState([]);
@@ -402,6 +408,7 @@ const sendSOS = async () => {
 
 return (
   <div className="min-h-screen bg-gradient-to-br from-gray-950 to-gray-900 text-white font-sans">
+    
     {/* Navbar */}
     <header className="w-full bg-black/80 backdrop-blur-md shadow-lg sticky top-0 z-50">
       <div className="max-w-7xl mx-auto flex flex-wrap justify-between items-center px-6 py-4">
@@ -459,7 +466,7 @@ return (
     </section>
 
     {/* Features Section */}
-    <section className="py-20 px-6 sm:px-8 bg-black">
+    <section ref={featureRef} className="py-20 px-6 sm:px-8 bg-black">
       <div className="max-w-6xl mx-auto grid sm:grid-cols-2 md:grid-cols-3 gap-10 text-center">
         {[{
           title: "Affordable & Transparent",
@@ -487,9 +494,11 @@ return (
     <section className="relative bg-[#232323] py-16 px-6 sm:px-8">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-10">
         <div className="space-y-6 max-w-xl text-center md:text-left">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-white">Emergency? Tap SOS</h2>
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white">
+            <TextReveal text="Emergency SOS" delay={0.2} />
+          </h2>
           <p className="text-white/80 text-lg">
-            If you feel unsafe during a ride, press the SOS button to notify your emergency contacts and authorities immediately.
+            <TextReveal text="If you feel unsafe during a ride, press the SOS button to notify your emergency contacts and authorities immediately." delay={0.4} />
           </p>
         </div>
         <div className="flex justify-center md:justify-end w-full md:w-auto">
@@ -504,7 +513,7 @@ return (
     </section>
 
     {/* Ongoing Rides */}
-    <OngoingRidesSection user={user} rides={ongoingRides} />
+    <OngoingRidesSection  user={user} rides={ongoingRides} />
 
     {/* Logout Modal */}
     {modal && (

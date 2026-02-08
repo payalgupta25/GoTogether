@@ -9,12 +9,13 @@ import { UseScrollReveal } from "../hooks/UseScrollReveal";
 
 function Start() {
 
+  
   return (
     <div className="min-h-screen w-full flex flex-col bg-[#0f0f10] text-gray-200 font-sans">
       
       {/* Header */}
       <header className="w-full flex items-center justify-between px-6 md:px-10 py-4 bg-[#1c1c1e]/80 backdrop-blur-md border-b border-[#2a2a2e] shadow-sm">
-        <h1 className="text-xl md:text-3xl font-semibold tracking-wide text-gray-100">
+        <h1  className="text-xl md:text-3xl font-semibold tracking-wide text-gray-100">
           GoTogether
         </h1>
         <nav>
