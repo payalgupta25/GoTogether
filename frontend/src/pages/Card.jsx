@@ -3,10 +3,11 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {
   User, MapPin, CalendarDays, Clock, Users, IndianRupee,
-  Trash2, Pencil, ChevronDown, ChevronUp
+  Trash2, Pencil, ChevronDown, ChevronUp , ArrowRight
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import RideDetailsLoading from '../components/RideDetailsLoading';
+import { motion } from 'framer-motion';
 
 const Card = () => {
   const { id } = useParams();
@@ -153,54 +154,88 @@ console.log("Time:",time);
 
 return (
   <div className="text-white min-h-screen flex items-center justify-center bg-gradient-to-r from-[#3a3f94] to-[#2a7a73] p-4 sm:p-8">
+    
+    
     <div className="backdrop-blur-xl bg-white/10 border border-white/30 shadow-2xl rounded-3xl p-6 sm:p-10 w-full max-w-3xl relative">
       
       {/* Header */}
       <div className="flex items-center gap-4 mb-6 flex-wrap">
         <User className="text-[#4fd1c5] w-7 h-7" />
-        <h1 className="text-3xl font-bold text-gray-100 break-words">{ride.driver?.name}</h1>
+        <h1 className="text-3xl font-bold text-gray-100 break-words">{ride.driver?.name}<span className='text-sm text-zinc-300 ml-2'>(Hostname)</span></h1>
       </div>
 
       {/* From → To and Stats */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-6 mb-6">
+      {/* <div className="flex flex-col mt-12 sm:flex-row sm:justify-between sm:items-center gap-6 mb-6 bg-white/10 p-2 rounded-md">
         <div className="flex flex-col sm:flex-row sm:items-center sm:gap-3 text-gray-100 space-y-2 sm:space-y-0">
-          <div className="flex items-center gap-2">
-            <MapPin className="text-green-600 w-5 h-5" />
+          
+          <div className="flex items-center w-1/2 gap-2">
+            <MapPin className="text-green-300 w-11 h-11" />
             <span className="font-semibold">From:</span> {ride.from}
           </div>
-          <span className="hidden sm:inline text-gray-100">→</span>
-          <div className="flex items-center gap-2">
-            <MapPin className="text-red-600 w-5 h-5" />
+          
+          <span className="hidden sm:inline text-gray-100 mx-4">→</span>
+          
+          <div className="flex items-center w-1/2  gap-2">
+            <MapPin className="text-red-600 w-6 h-6" />
             <span className="font-semibold">To:</span> {ride.to}
           </div>
+        
         </div>
 
-        <div className="flex flex-wrap gap-4 text-gray-100">
-          <div className="flex items-center gap-2">
-            <Users className="text-[#4fd1c5] w-5 h-5" />
-            <span><strong>Seats:</strong> {ride.numberOfMembers}</span>
+        
+      </div> */}
+      {/* Route Section */}
+          <div className="bg-white/5 relative hover:bg-white/10 rounded-3xl p-6 border border-white/5 mb-8">
+            <div className="flex mb-6 flex-col sm:flex-row items-start sm:items-start justify-between gap-4">
+              <div className="flex-1">
+                <p className="text-xs uppercase tracking-widest text-gray-500 mb-1"></p>
+                <div className="flex flex-col items-center gap-2">
+                  <MapPin className="text-emerald-400 font-extrabol animate-pulse w-9 h-9" />
+                  <span className="text-lg font-medium text-gray-100 text-center">{ride.from}</span>
+                </div>
+              </div>
+              
+              <div className="hidden sm:flex items-center  translate-y-1/2 justify-center w-12">
+                <ArrowRight className="text-gray-200 w-6 h-6" />
+              </div>
+
+              <div className="flex-1">
+                <p className="text-xs uppercase tracking-widest text-gray-500 mb-1"></p>
+                <div className="flex flex-col items-center gap-2">
+                  <MapPin className="text-rose-700 animate-pulse h-9 w-9" />
+                  <span className="text-lg font-medium text-gray-100 text-center">{ride.to}</span>
+                </div>
+              </div>
+            </div>
+            <motion.p 
+              initial={{ x: "-10%" }}
+              animate={{ x: "1800%" }}
+              transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+              className="text-2xl absolute bottom-2 opacity-40 select-none pointer-events-none"
+            >
+              🚗
+            </motion.p>
           </div>
-          <div className="flex items-center gap-2">
-            <IndianRupee className="text-[#4fd1c5] w-5 h-5" />
-            <span><strong>Price:</strong> ₹{ride.price}</span>
-          </div>
-        </div>
-      </div>
+
       {ride.womenOnly && (
         <span className="inline-block mt-1 px-2 py-1 text-xs bg-pink-600 text-white rounded-full">
           🚺 Women Only
         </span>
       )}
       {/* Date and Time */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 text-gray-100">
-        <div className="flex items-center gap-2">
-          <CalendarDays className="text-[#4fd1c5] w-5 h-5" />
-          <span><strong>Date:</strong> {date}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <Clock className="text-[#4fd1c5] w-5 h-5" />
-          <span><strong>Time:</strong> {time}</span>
-        </div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        {[
+          { icon: CalendarDays, label: "Date", value: date, color: "text-blue-400", bg: "bg-blue-400/10" },
+          { icon: Clock, label: "Time", value: time, color: "text-purple-400", bg: "bg-purple-400/10" },
+          { icon: Users, label: "Seats", value: ride.numberOfMembers, color: "text-orange-400", bg: "bg-orange-400/10" },
+          { icon: IndianRupee, label: "Price", value: `₹${ride.price}`, color: "text-[#4fd1c5]", bg: "bg-[#4fd1c5]/10" },
+        ].map((item, i) => (
+          <div key={i} className={`p-4 rounded-2xl border border-white/5 ${item.bg} backdrop-blur-md`}>
+            <item.icon className={`${item.color} w-5 h-5 mb-2`} />
+            <p className="text-[10px] uppercase tracking-widest text-gray-700 font-bold">{item.label}</p>
+            <p className="text-sm font-semibold text-white truncate">{item.value}</p>
+          </div>
+        ))}
       </div>
 
       {/* Passengers Section */}
@@ -222,7 +257,7 @@ return (
                   className="flex items-center gap-3 bg-green-100 px-4 py-2 rounded-2xl max-w-xs w-fit"
                 >
                   <User className="w-5 h-5 text-green-600" />
-                  <span className="font-medium">{p.name}</span>
+                  <span className="font-medium text-green-600">{p.name}</span>
                 </div>
               ))
             ) : (

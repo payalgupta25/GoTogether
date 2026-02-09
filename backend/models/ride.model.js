@@ -29,7 +29,13 @@ const rideSchema = new mongoose.Schema({
     
     date: {
         type: Date,
-        required: true
+        required: true,
+        validate: {
+            validator: function(v) {
+                return v >= new Date().setHours(0, 0, 0, 0);
+            },
+            message: props => `${props.value} is in the past!`
+        }        
     },
     time: {
         type: String,

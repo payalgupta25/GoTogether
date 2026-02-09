@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import React from "react";
 import { CarFront } from "lucide-react";
 import { useNavigate , useLocation} from "react-router-dom";
 import { motion } from "framer-motion";
@@ -8,7 +9,13 @@ import RateDriverModal from "./RateDriverModal.jsx";
 // import MapComponent from "./MapComponent.jsx"; // ✅ import your map
 // import socket from "../socket.js";
 import LiveRouteStatusBar from "./LiveRouteStatusBar.jsx";
+import { UseScrollReveal } from "../hooks/UseScrollReveal.jsx";
+
 const OngoingRidesSection = ({ user, rides = [] }) => {
+
+    const ridesRef = React.useRef(null);
+    UseScrollReveal(ridesRef , {delay: 0.3}) ;
+
   const [showModal, setShowModal] = useState(false);
   const [rideToRate, setRideToRate] = useState(null);
   const [liveLocations, setLiveLocations] = useState({});
@@ -87,7 +94,7 @@ useEffect(() => {
   }
 
   return (
-    <section className="py-16 px-6 bg-[#1c1c1e] ">
+    <section ref = {ridesRef} className="py-16 px-6 bg-[#1c1c1e] ">
       <h2 className="text-3xl font-extrabold text-center text-white mb-10">Your Ongoing Rides</h2>
       <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
         {rides.map((ride, index) => {
