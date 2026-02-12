@@ -9,7 +9,12 @@ export const getAutoCompleteSuggestions = async (input, lat, lon) => {
         throw new Error('Must be at least 3 characters long');
     }
     const apiKey = "mDO5KfGVfRkA5MEeyU2iRVcCFu3gN6uF";
-    const url = `https://api.tomtom.com/search/2/geocode/${encodeURIComponent(input)}.json?key=${apiKey}&countrySet=IN&typeahead=true&limit=5&lat=${lat}&lon=${lon}`;
+    let url = `https://api.tomtom.com/search/2/geocode/${encodeURIComponent(input)}.json?key=${apiKey}&countrySet=IN&typeahead=true&limit=5`;
+
+    if (lat && lon) {
+      url += `&lat=${lat}&lon=${lon}`;
+    }
+
 
     try {
         const response = await axios.get(url);
