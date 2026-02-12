@@ -1,8 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect , useCallback} from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { getAutoCompleteSuggestions } from "../../../backend/controllers/maps.controller.js";
+import { getAutoCompleteSuggestions , getCoordinates} from "../../../backend/controllers/maps.controller.js";
+import tt from "@tomtom-international/web-sdk-maps";
+import { useRef } from "react";
+import debounce from "lodash.debounce";
+import { useMemo } from "react";
 
 const CreateRide = () => {
   const navigate = useNavigate();
@@ -13,12 +17,57 @@ const CreateRide = () => {
     date: "",
     time: "",
     price: "",
-    womenOnly: false
+    womenOnly: false,
+    duration: "",
+    distance: "",
   });
 
   const [error, setError] = useState("");
   const [suggestions, setSuggestions] = useState({ from: [], to: [] });
   const [userLocation, setUserLocation] = useState({lat: null, lon: null});
+  const mapRef = useRef(null);
+
+  const [fromInput, setFromInput] = useState("");
+  const [toInput, setToInput] = useState("");
+
+  const debouncedRoute = useMemo(
+    () =>
+      debounce((from, to) => {
+        showRouteOnMap(from, to);
+      }, 800),   // wait 800ms
+    []
+  );
+
+  
+  
+  const debouncedSuggestions = useMemo(
+    () =>
+      debounce(async (value, fieldName) => {
+        try {
+          const res = await getAutoCompleteSuggestions(
+            value,
+            userLocation?.lat,
+            userLocation?.lon
+          );
+          
+          setSuggestions((prev) => ({
+            ...prev,
+            [fieldName]: res,
+          }));
+        } catch (err) {
+          console.error("Suggestion error:", err);
+        }
+      }, 500),
+      [userLocation]
+    );
+    
+    
+    useEffect(() => {
+      return () => {
+        debouncedSuggestions.cancel();
+      };
+    }, [debouncedSuggestions]);
+
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
@@ -34,10 +83,96 @@ const CreateRide = () => {
     );
   }, []);
 
+  useEffect(() => {
+    if (rideDetails.from && rideDetails.to) {
+      debouncedRoute(rideDetails.from, rideDetails.to);
+    }
+  
+    return () => {
+      debouncedRoute.cancel();
+    };
+  }, [rideDetails.from, rideDetails.to, debouncedRoute]);
 
   const handleChange = (e) => {
     setRideDetails({ ...rideDetails, [e.target.name]: e.target.value });
   };
+
+  const showRouteOnMap = async (fromPlace, toPlace) => {
+  try {
+    // 1. Get coordinates
+    const fromCoords = await getCoordinates(fromPlace);
+    const toCoords = await getCoordinates(toPlace);
+
+    const apiKey = "mDO5KfGVfRkA5MEeyU2iRVcCFu3gN6uF";
+
+    // 2. Routing API
+    const routeRes = await axios.get(
+      `https://api.tomtom.com/routing/1/calculateRoute/` +
+      `${fromCoords.lat},${fromCoords.lon}:` +
+      `${toCoords.lat},${toCoords.lon}/json?key=${apiKey}`
+    );
+
+    const route = routeRes.data.routes[0];
+
+    const distanceKm = (route.summary.lengthInMeters / 1000).toFixed(2);
+    const timeMin = Math.ceil(route.summary.travelTimeInSeconds / 60);
+
+    setRideDetails((prev) => ({
+      ...prev,
+      distance: distanceKm,
+      duration: timeMin,
+    }));
+
+    // 3. Create Map
+    if (mapRef.current) {
+      mapRef.current.remove();
+    }
+
+    const map = tt.map({
+      key: apiKey,
+      container: "map",
+      center: [fromCoords.lon, fromCoords.lat],
+      zoom: 10,
+    });
+
+    mapRef.current = map;
+
+    // 4. Markers
+    new tt.Marker().setLngLat([fromCoords.lon, fromCoords.lat]).addTo(map);
+    new tt.Marker({ color: "red" })
+      .setLngLat([toCoords.lon, toCoords.lat])
+      .addTo(map);
+
+    // 5. Draw Route
+    const geoJson = routeRes.data.routes[0].legs[0].points;
+
+    const routeGeoJson = {
+      type: "Feature",
+      geometry: {
+        type: "LineString",
+        coordinates: geoJson.map((p) => [p.longitude, p.latitude]),
+      },
+    };
+
+    map.on("load", () => {
+      map.addLayer({
+        id: "route",
+        type: "line",
+        source: {
+          type: "geojson",
+          data: routeGeoJson,
+        },
+        paint: {
+          "line-color": "#4F46E5",
+          "line-width": 5,
+        },
+      });
+    });
+  } catch (err) {
+    console.error("Route error:", err);
+  }
+};
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -60,24 +195,44 @@ const CreateRide = () => {
 
   const handleSuggestion = async (e) => {
     const { name, value } = e.target;
-    setRideDetails({ ...rideDetails, [name]: value });
+    // setRideDetails({ ...rideDetails, [name]: value });
+
+    if (name === "from") setFromInput(value);
+    if (name === "to") setToInput(value);
+
+    if (!userLocation.lat || !userLocation.lon) return;
 
     if (value.length >= 3) {
-      try {
-        const result = await getAutoCompleteSuggestions(value, userLocation.lat, userLocation.lon);
-        setSuggestions((prev) => ({ ...prev, [name]: result }));
-      } catch (err) {
-        console.error("Suggestion error:", err.message);
-      }
+      debouncedSuggestions(value, name);
     } else {
       setSuggestions((prev) => ({ ...prev, [name]: [] }));
     }
+
+
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0b0b0b] px-4">
       <div className="w-full max-w-3xl bg-[#1a1a1a] text-white p-8 rounded-2xl shadow-lg border border-[#2a2a2a]">
         <h2 className="text-3xl font-bold text-center mb-6 text-white">Create a Ride</h2>
+{rideDetails.from && rideDetails.to && (
+  <div className="mt-6">
+
+    {/* Map */}
+    <div
+      id="map"
+      className="w-full h-[400px] rounded-xl"
+    ></div>
+
+    {/* Distance + Time */}
+    <div className="mt-3 bg-[#111] p-3 rounded-lg text-sm">
+      <p>Distance: {rideDetails.distance} km</p>
+      <p>Estimated Time: {rideDetails.duration} mins</p>
+    </div>
+
+  </div>
+)}
+
 
         {error && <p className="text-red-500 text-sm text-center mb-4">{error}</p>}
 
@@ -111,12 +266,19 @@ const CreateRide = () => {
                 type={field.type}
                 name={field.name}
                 placeholder={field.placeholder}
-                value={rideDetails[field.name]}
-                onChange={
-                  field.name === "from" || field.name === "to"
-                    ? handleSuggestion
-                    : handleChange
-                }
+                  value={
+                    field.name === "from"
+                      ? fromInput
+                      : field.name === "to"
+                      ? toInput
+                      : rideDetails[field.name]
+                  }
+
+                  onChange={
+                    field.name === "from" || field.name === "to"
+                      ? handleSuggestion
+                      : handleChange
+                  }
                 required
                 className="w-full p-3 rounded-md bg-[#2a2a2a] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -130,8 +292,12 @@ const CreateRide = () => {
                         onClick={() => {
                           setRideDetails((prev) => ({
                             ...prev,
-                            [field.name]: s,
+                            [field.name]: s,   // FINAL selected place
                           }));
+                        
+                          if (field.name === "from") setFromInput(s);
+                          if (field.name === "to") setToInput(s);
+                        
                           setSuggestions((prev) => ({
                             ...prev,
                             [field.name]: [],
