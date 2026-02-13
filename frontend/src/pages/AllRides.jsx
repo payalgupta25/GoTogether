@@ -124,11 +124,13 @@ const AllRides = () => {
               id="womenOnly"
               checked={womenOnly}
               onChange={(e) => setWomenOnly(e.target.checked)}
-              className="accent-pink-500 w-4 h-4"
+              className="accent-pink-500 w-4 h-4 sm:w-5 sm:h-5"
             />
-            <label htmlFor="womenOnly" className="text-sm text-gray-300">
-              Women Only Rides
-            </label>
+            <div className="flex flex-col visible">
+              <label htmlFor="womenOnly" className="text-sm text-gray-300">
+                Women Only Rides
+              </label>
+            </div>
           </div>
 
           <div className="relative">
@@ -205,6 +207,17 @@ const AllRides = () => {
             >
               Close
             </button>
+          </div>
+          <div className="mb-4">
+            <label>
+            <input
+              type="checkbox"
+              checked={womenOnly}
+              onChange={(e) => setWomenOnly(e.target.checked)}
+              className="mr-2"
+            />
+            Women Only
+          </label>
           </div>
           <div className="space-y-4">
             <input
