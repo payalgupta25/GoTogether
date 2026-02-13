@@ -4,6 +4,8 @@ import axios from "axios";
 import { MapPin, Send, Filter } from "lucide-react";
 import RideDetailsLoading from "../components/RideDetailsLoading";
 import Navbar from "../components/Navbar";
+import { Button } from "@headlessui/react";
+import Buttons from "../components/Buttons";
 
 const AllRides = () => {
   const location = useLocation();
@@ -268,7 +270,9 @@ const AllRides = () => {
         {filteredRides.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
             {filteredRides.map((ride) => (
+              
               <div key={ride._id} className="bg-[#1c1c1e] p-6 rounded-lg shadow-md border border-[#2c2c2e]">
+                
                 <h1 className="text-lg font-bold text-white">{ride.driver?.name}</h1>
                 <h2 className="text-md text-gray-300">
                   {ride.from} ➝ {ride.to}  
@@ -286,9 +290,11 @@ const AllRides = () => {
                   ))}
                 </ul>
                 <Link to={`/ride/${ride._id}`}>
-                  <button className="mt-3 bg-gradient-to-r from-[#3a3f94] to-[#2a7a73] text-white py-2 px-4 rounded-lg hover:opacity-90 transition">
+                  {/* <button className="mt-3 bg-gradient-to-r from-[#3a3f94] to-[#2a7a73] text-white py-2 px-4 rounded-lg hover:opacity-90 transition">
                     View Details
-                  </button>
+                  </button> */}
+
+                  <Buttons text="View Details" />
                 </Link>
               </div>
             ))}

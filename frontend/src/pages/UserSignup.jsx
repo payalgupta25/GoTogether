@@ -4,6 +4,7 @@ import { UserDataContext } from "../context/UserContext";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { FaRegEyeSlash } from "react-icons/fa";
+import Buttons from "../components/Buttons";
 
 const UserSignup = () => {
   const [email, setEmail] = useState("");
@@ -96,12 +97,13 @@ const UserSignup = () => {
             <FaRegEyeSlash size={22} onClick={()=>setVisibility(!visibility)}/>
           </div>
 
-          <button
+          {/* <button
             type="submit"
             className="w-full bg-gradient-to-r from-[#3a3f94] to-[#2a7a73] text-white font-semibold py-3 rounded-lg shadow-md hover:opacity-90 transition"
           >
             Sign Up
-          </button>
+          </button> */}
+          <Buttons text="Sign Up" type="submit" className={'w-full'}/>
         </form>
 
         <p className="text-center text-sm mt-6 text-gray-400">

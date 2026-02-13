@@ -6,6 +6,7 @@ import OngoingRidesSection from "../components/OngoingRidesSection.jsx";
 import useGeoLocation from "../hooks/useGeoLocation.js";
 import TextReveal from "../hooks/TextReveal.jsx";
 import { UseScrollReveal } from "../hooks/UseScrollReveal.jsx";
+import Buttons from "../components/Buttons.jsx";
 
 const Home = () => {
 
@@ -445,18 +446,22 @@ return (
             Your everyday travel companion — find rides or create your own with complete control.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 mt-4">
-            <button
+            {/* <button
               onClick={() => navigate("/all-rides")}
               className="cursor-pointer border border-white bg-gradient-to-r from-[#3a3f94] to-[#2a7a73] text-white px-6 py-3 rounded-xl font-semibold shadow-md text-center"
             >
               🚗 View Rides
-            </button>
-            <button
+            </button> */}
+
+            <Buttons text="View Rides" onClick={()=>navigate('/all-rides')}/>
+            {/* <button
               onClick={() => navigate("/create-ride")}
               className="cursor-pointer text-[#4fd1c5] border border-white px-6 py-3 rounded-xl font-semibold shadow-md text-center"
             >
               ✨ Create Ride
-            </button>
+            </button> */}
+
+            <Buttons text="Create Ride" className={"bg-transparent"} onClick={()=>navigate('/create-ride')}/>
           </div>
         </div>
         <div className="md:w-1/2 hidden md:flex items-center justify-center">
@@ -467,6 +472,7 @@ return (
 
     {/* Features Section */}
     <section ref={featureRef} className="py-20 px-6 sm:px-8 bg-black">
+      
       <div className="max-w-6xl mx-auto grid sm:grid-cols-2 md:grid-cols-3 gap-10 text-center">
         {[{
           title: "Affordable & Transparent",
