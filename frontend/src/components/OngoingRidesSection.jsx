@@ -10,6 +10,8 @@ import RateDriverModal from "./RateDriverModal.jsx";
 // import socket from "../socket.js";
 import LiveRouteStatusBar from "./LiveRouteStatusBar.jsx";
 import { UseScrollReveal } from "../hooks/UseScrollReveal.jsx";
+import TextReveal from "../hooks/TextReveal.jsx";
+import Buttons from "./Buttons.jsx";
 
 const OngoingRidesSection = ({ user, rides = [] }) => {
 
@@ -95,7 +97,7 @@ useEffect(() => {
 
   return (
     <section ref = {ridesRef} className="py-16 px-6 bg-[#1c1c1e] ">
-      <h2 className="text-3xl font-extrabold text-center text-white mb-10">Your Ongoing Rides</h2>
+      <TextReveal text="Your Ongoing Rides" className="text-3xl font-extrabold text-center w-full text-white mb-10" delay={0.3} />
       <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
         {rides.map((ride, index) => {
           const isDriver = isUserDriver(ride);
@@ -131,12 +133,14 @@ useEffect(() => {
                 </p>
 
                 {/* Mark as Complete (only for drivers) */}
-                <button
+                {/* <button
                   onClick={() => handleMarkAsComplete(ride)}
                   className="mt-4 bg-gradient-to-r from-[#3a3f94] to-[#2a7a73] text-white px-5 py-2 rounded-lg shadow-md transition"
                 >
                   ✅ Mark as Complete
-                </button>
+                </button> */}
+
+                <Buttons text="✅ Mark as Complete" onClick={()=>handleMarkAsComplete(ride)}/>
                 {/* {liveLocation.rideId === ride._id && liveLocation.lat && ( */}
                 {liveLocations[ride._id]?.lat && (
                   <LiveRouteStatusBar

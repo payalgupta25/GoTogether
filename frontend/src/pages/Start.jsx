@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import {useGSAP} from '@gsap/react' ;
 import TextReveal from "../hooks/TextReveal";
 import { UseScrollReveal } from "../hooks/UseScrollReveal";
+import Buttons from "../components/Buttons";
 
 function Start() {
 
@@ -39,9 +40,9 @@ function Start() {
         </p>
         <Link
           to="/signup"
-          className="px-8 py-3 bg-gradient-to-r from-[#3a3f94] to-[#2a7a73] text-white rounded-md font-semibold shadow-lg hover:opacity-90 transition"
+          // className="px-8 py-3 bg-gradient-to-r from-[#3a3f94] to-[#2a7a73] text-white rounded-md font-semibold shadow-lg hover:opacity-90 transition"
         >
-          Get Started
+          <Buttons text="Get Started" />
         </Link>
       </section>
 

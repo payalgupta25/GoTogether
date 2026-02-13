@@ -7,6 +7,7 @@ import tt from "@tomtom-international/web-sdk-maps";
 import { useRef } from "react";
 import debounce from "lodash.debounce";
 import { useMemo } from "react";
+import Buttons from "../components/Buttons.jsx";
 
 const CreateRide = () => {
   const navigate = useNavigate();
@@ -314,12 +315,21 @@ const CreateRide = () => {
             
           ))}
 
-          <button
+          <div className="fixed inset-0 z-0 pointer-events-none">
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-96 h-96 bg-[#ffffff] rounded-full mix-blend-overlay filter blur-[128px] opacity-10 animate-ping"></div>
+            <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-[#0f0502] to-transparent"></div>
+          </div>
+
+          {/* <button
             type="submit"
             className="sm:col-span-2 w-full bg-gradient-to-r from-indigo-500 to-teal-400 hover:opacity-90 text-white py-3 rounded-md font-semibold transition duration-200"
           >
             Create Ride
-          </button>
+          </button> */}
+          <div className="sm:col-span-2">
+            <Buttons text="Create Ride" type="submit" className={"w-full "} />
+          </div>
         </form>
       </div>
     </div>

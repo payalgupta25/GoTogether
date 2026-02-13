@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+
 function Navbar() {
 
     const navigate = useNavigate();
@@ -31,6 +32,7 @@ function Navbar() {
           alt="Profile"
           className="w-12 h-12 rounded-full border-2 border-black hover:border-gray-500 transition"
         />
+          
         {(
           // Render logout button if a token exists
           <button onClick={handleLogout} className="p-2 px-5 m-3 text-xl bg-red-500 text-white rounded-4xl">

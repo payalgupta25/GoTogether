@@ -8,6 +8,7 @@ import {
 import { toast } from 'react-hot-toast';
 import RideDetailsLoading from '../components/RideDetailsLoading';
 import { motion } from 'framer-motion';
+import Buttons from '../components/Buttons';
 
 const Card = () => {
   const { id } = useParams();
@@ -209,11 +210,11 @@ return (
             </div>
             <motion.p 
               initial={{ x: "-10%" }}
-              animate={{ x: "1800%" }}
+              animate={{ x: "1500%" }}
               transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
               className="text-2xl absolute bottom-2 opacity-40 select-none pointer-events-none"
             >
-              🚗
+              <img className='w-10' src='https://res.cloudinary.com/dc8ryewn6/image/upload/v1770995069/vecteezy_vintage-car_1193929_toholp.png'/>
             </motion.p>
           </div>
 
@@ -270,10 +271,10 @@ return (
       {/* Buttons Bottom Right */}
       <div className="mt-10 flex justify-end items-center gap-4 flex-wrap sm:absolute sm:bottom-6 sm:right-6">
         <button
-          className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-full shadow text-sm sm:text-base"
+          // className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-full shadow text-sm sm:text-base"
           onClick={() => setShowModal(true)}
         >
-          Book Ride
+          <Buttons text="Book Ride" className={"bg-blue-700"}/>
         </button>
         <button className="p-2 bg-gray-200 hover:bg-gray-300 rounded-full" title="Edit Ride" onClick={openEditModal}>
           <Pencil className="text-blue-600 w-5 h-5" />
