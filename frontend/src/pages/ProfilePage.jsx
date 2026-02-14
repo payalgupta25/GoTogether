@@ -13,6 +13,8 @@ import {
   Users,
   Car,
 } from "lucide-react";
+import { TbMoodEdit } from "react-icons/tb";
+import React from "react";
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
@@ -43,6 +45,7 @@ const ProfilePage = () => {
       const { data } = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/auth/me`, {
         withCredentials: true,
       });
+      console.log("Data in ProfilePage:", data);
       setUser(data.user);
     } catch (error) {
       console.error("Error fetching user profile", error);
@@ -197,6 +200,34 @@ const getLocation = () => {
     const saved = distance * (1 - 1 / (1 + passengers)) * 0.21;
     return saved.toFixed(2);
   };
+
+  const fileInputRef = React.useRef(null);
+
+const handlePfpChange = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const formData = new FormData();
+  formData.append("pfp", file); // Ye backend ke upload.single('pfp') se match kar raha hai
+
+  try {
+    const { data } = await axios.post(
+      `${import.meta.env.VITE_BASE_URL}/api/auth/pfp`, 
+      formData,
+      { 
+        withCredentials: true,
+        headers: { "Content-Type": "multipart/form-data" } 
+      }
+    );
+    
+    // Yahan state update ho rahi hai
+    setUser(prev => ({ ...prev, pfp: data.pfp })); 
+    toast.success("Uploaded!");
+  } catch (error) {
+    console.error("Error details:", error.response?.data);
+    toast.error(error.response?.data?.message || "Upload failed");
+  }
+};
 
   // return (
   //   <div className="min-h-screen bg-gradient-to-r from-[#3a3f94] to-[#2a7a73] flex items-center justify-center px-4 py-6">
@@ -394,12 +425,22 @@ return (
 
       {user ? (
         <>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center relative gap-4">
             <img
-              src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
+              src={user.pfp || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"}
               alt="Profile"
               className="w-16 h-16 rounded-full border-2 border-gray-400"
             />
+            <div className="absolute bottom-0 left-12 text-teal-400">
+              <input
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                onChange={handlePfpChange}
+                className="hidden"
+              />
+              <button type='button' onClick={() => fileInputRef.current.click()}> <TbMoodEdit /> </button>
+            </div>
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-xl font-bold">{user.name}</h2>

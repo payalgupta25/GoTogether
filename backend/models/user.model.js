@@ -60,6 +60,10 @@ const userSchema = new mongoose.Schema({
         passenger: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
         score: { type: Number, min: 1, max: 5 },
     }],
+    pfp : {
+        type: String,
+        default: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
+    },
     
     verficationToken:String,
     verficationTokenExpiresAt:Date,
