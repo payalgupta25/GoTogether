@@ -151,6 +151,7 @@ export const getMe = async (req, res, next) => {
         isVerified: user.isVerified,
         vehicle: user.vehicle,
         averageRating: parseFloat(averageRating),
+        pfp : user.pfp
       }
     });
 
