@@ -7,7 +7,7 @@ import axios from 'axios';
 export const getAllRides = async (req, res) => {
     try {
         const rides = await Ride.find({isCompleted:false})
-        .populate("driver", "name email averageRating") // Fetch only name and email from User
+        .populate("driver", "name email averageRating pfp") // Fetch only name and email from User
         .populate("passengers", "name");
         res.status(200).json(rides);
     } catch (error) {
@@ -26,7 +26,7 @@ export const getFilteredRides = async (req, res) => {
                 {date:date},
                 {womenOnly:womenOnly}
             ]
-         });
+         }) // Fetch only name and email from User;
         res.status(200).json(rides);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -36,7 +36,7 @@ export const getFilteredRides = async (req, res) => {
 // Get ride by ID
 export const getRideById = async (req, res) => {
     try {
-      const ride = await Ride.findById(req.params.id).populate("passengers driver", "name email");
+      const ride = await Ride.findById(req.params.id).populate("passengers driver", "name email pfp");
       if (!ride) {
         return res.status(404).json({ message: "Ride not found" });
       }

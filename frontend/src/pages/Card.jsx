@@ -161,7 +161,12 @@ return (
       
       {/* Header */}
       <div className="flex items-center gap-4 mb-6 flex-wrap">
-        <User className="text-[#4fd1c5] w-7 h-7" />
+        <img
+          src={ride.driver?.pfp || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"}
+          alt="Profile"
+          className="w-12 h-12 rounded-full border-2 border-black hover:border-gray-500 transition"
+        />
+        {/* <User className="text-[#4fd1c5] w-7 h-7" /> */}
         <h1 className="text-3xl font-bold text-gray-100 break-words">{ride.driver?.name}<span className='text-sm text-zinc-300 ml-2'>(Hostname)</span></h1>
       </div>
 

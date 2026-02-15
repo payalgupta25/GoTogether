@@ -272,7 +272,11 @@ const AllRides = () => {
             {filteredRides.map((ride) => (
               
               <div key={ride._id} className="bg-[#1c1c1e] p-6 rounded-lg shadow-md border border-[#2c2c2e]">
-                
+                <img
+                 src={ride.driver?.pfp || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"}
+                 alt="Profile"
+                 className="w-12 h-12 rounded-full border-2 border-black hover:border-gray-500 transition"
+                />
                 <h1 className="text-lg font-bold text-white">{ride.driver?.name}</h1>
                 <h2 className="text-md text-gray-300">
                   {ride.from} ➝ {ride.to}  
