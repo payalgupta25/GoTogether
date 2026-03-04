@@ -139,8 +139,9 @@ useEffect(() => {
                 >
                   ✅ Mark as Complete
                 </button> */}
-
-                <Buttons text="✅ Mark as Complete" onClick={()=>handleMarkAsComplete(ride)}/>
+                {ride.driver._id === user._id && (
+                  <Buttons text="✅ Mark as Complete" onClick={()=>handleMarkAsComplete(ride)}/>
+                )}
                 {/* {liveLocation.rideId === ride._id && liveLocation.lat && ( */}
                 {liveLocations[ride._id]?.lat && (
                   <LiveRouteStatusBar

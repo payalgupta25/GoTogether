@@ -151,7 +151,8 @@ const handleUpdateRide = async () => {
 
 console.log("Time:",time);
 
-
+console.log("driver",ride.driver.id);
+console.log("user",currentUser.user._id);
 
 return (
   <div className="text-white min-h-screen flex items-center justify-center bg-gradient-to-r from-[#3a3f94] to-[#2a7a73] p-4 sm:p-8">
@@ -275,18 +276,25 @@ return (
 
       {/* Buttons Bottom Right */}
       <div className="mt-10 flex justify-end items-center gap-4 flex-wrap sm:absolute sm:bottom-6 sm:right-6">
+        {ride.driver.id != currentUser.user._id && (
         <button
           // className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-full shadow text-sm sm:text-base"
           onClick={() => setShowModal(true)}
         >
           <Buttons text="Book Ride" className={"bg-blue-700"}/>
         </button>
-        <button className="p-2 bg-gray-200 hover:bg-gray-300 rounded-full" title="Edit Ride" onClick={openEditModal}>
+          
+        )}
+        {(ride.driver.id === currentUser.user._id) && (
+          <>
+          <button className="p-2 bg-gray-200 hover:bg-gray-300 rounded-full" title="Edit Ride" onClick={openEditModal}>
           <Pencil className="text-blue-600 w-5 h-5" />
         </button>
         <button onClick={() => setShowDeleteModal(true)} className="p-2 bg-red-100 hover:bg-red-200 rounded-full" title="Delete Ride">
           <Trash2 className="text-red-600 w-5 h-5" />
         </button>
+          </>
+        )}
       </div>
     </div>
 
