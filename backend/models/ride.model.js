@@ -28,15 +28,18 @@ const rideSchema = new mongoose.Schema({
     },
     
     date: {
-        type: Date,
-        required: true,
-        validate: {
-            validator: function(v) {
-                return v >= new Date().setHours(0, 0, 0, 0);
-            },
-            message: props => `${props.value} is in the past!`
-        }        
+      type: Date,
+      required: true,
+      validate: {
+        validator: function(v) {
+          // Only validate on new documents, not on updates/completion
+          if (!this.isNew) return true;
+          return v >= new Date().setHours(0, 0, 0, 0);
+        },
+        message: props => `${props.value} is in the past!`
+      }
     },
+    
     time: {
         type: String,
         required: true,

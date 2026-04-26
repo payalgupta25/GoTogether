@@ -32,29 +32,35 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // Setup Socket.IO on the HTTP server with matching CORS
-// const io = new Server(server, {
-//   cors: corsOptions,
-//   allowEIO3: true
-// });
+const io = new Server(server, {
+  cors: corsOptions,
+  allowEIO3: true
+});
 
 // Basic WebSocket connection
-// io.on("connection", (socket) => {
-//   console.log("A user connected:", socket.id);
+io.on("connection", (socket) => {
+  console.log("Socket connected:", socket.id);
 
-//   // socket.on("sendLocation", ({ rideId, lat, lon }) => {
-//   //   console.log(`Live location for ride ${rideId}:`, lat, lon);
+  // Client joins a specific ride's room
+  socket.on("joinRide", ({ rideId }) => {
+    socket.join(`ride-${rideId}`);
+    console.log(`Socket ${socket.id} joined ride-${rideId}`);
+  });
 
-//   //   // Broadcast it to others if needed:
-//   //   // io.emit("locationUpdate", { rideId, lat, lon });
+  // Driver sends location → server broadcasts to everyone in that ride's room
+  socket.on("sendLocation", ({ rideId, lat, lon }) => {
+    io.to(`ride-${rideId}`).emit("locationUpdate", { rideId, lat, lon });
+  });
 
-//   //   // OR: Save to DB
-//   //   // await Ride.findByIdAndUpdate(rideId, { currentLocation: { lat, lon } });
-//   // });
+  // Client leaves the room (cleanup)
+  socket.on("leaveRide", ({ rideId }) => {
+    socket.leave(`ride-${rideId}`);
+  });
 
-//   // socket.on("disconnect", () => {
-//   //   console.log("User disconnected:", socket.id);
-//   // });
-// });
+  socket.on("disconnect", () => {
+    console.log("Socket disconnected:", socket.id);
+  });
+});
 
 // API routes
 app.use("/api/auth", authRoutes);
