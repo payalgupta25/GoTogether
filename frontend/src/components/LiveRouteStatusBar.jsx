@@ -55,36 +55,58 @@ const LiveRouteStatusBar = ({ from, to, liveLat, liveLng }) => {
     setProgress(percent);
   }, [fromCoords, toCoords, liveLat, liveLng]);
 
-  return (
-    <div className="w-full bg-gray-100 p-4 rounded-lg shadow">
-      <div className="text-sm text-gray-700 mb-2">
-        <strong>Distance left:</strong> {distanceLeft} km |{" "}
-        <strong>ETA:</strong> {timeLeft} min
-      </div>
-
-      <div className="relative w-full h-6 bg-gray-300 rounded-full overflow-hidden">
-        <div
-          className="absolute top-1/2 -translate-y-1/2 text-base leading-none"
-          style={{
-            left: `${progress}%`,
-            transform: "translate(-50%, -50%)",
-            transition: "left 1s ease",
-          }}
-        >
-          🚗
-        </div>
-      </div>
-
-      {fromCoords && toCoords && (
-        <LiveMap
-          fromCoords={{ lat: fromCoords.lat, lng: fromCoords.lon }}
-          toCoords={{ lat: toCoords.lat, lng: toCoords.lon }}
-          liveLat={liveLat}
-          liveLng={liveLng}
-        />
-      )}
+  // Progress bar section in LiveRouteStatusBar.jsx — replace the existing return
+return (
+  <div className="w-full bg-[#1a1a1a] border border-gray-700 p-4 rounded-xl mt-4">
+    
+    {/* Stats row */}
+    <div className="flex justify-between text-sm text-gray-300 mb-3">
+      <span>
+        <span className="text-white font-medium">{distanceLeft} km</span> remaining
+      </span>
+      <span>
+        ETA <span className="text-white font-medium">{timeLeft} min</span>
+      </span>
     </div>
-  );
+
+    {/* Progress bar */}
+    <div className="relative w-full h-2 bg-gray-700 rounded-full overflow-visible mb-1">
+      {/* Filled portion */}
+      <div
+        className="absolute top-0 left-0 h-2 bg-blue-500 rounded-full transition-all duration-1000"
+        style={{ width: `${progress}%` }}
+      />
+      {/* Car icon on top */}
+      <div
+        className="absolute top-1/2 text-base leading-none"
+        style={{
+          left: `${progress}%`,
+          transform: "translate(-50%, -50%)",
+          transition: "left 1s ease",
+          fontSize: "16px",
+        }}
+      >
+        🚗
+      </div>
+    </div>
+
+    {/* From / To labels */}
+    <div className="flex justify-between text-xs text-gray-500 mt-2 mb-2">
+      <span>Pickup</span>
+      <span>Drop-off</span>
+    </div>
+
+    {/* Map */}
+    {fromCoords && toCoords && (
+      <LiveMap
+        fromCoords={{ lat: fromCoords.lat, lng: fromCoords.lon }}
+        toCoords={{ lat: toCoords.lat, lng: toCoords.lon }}
+        liveLat={liveLat}
+        liveLng={liveLng}
+      />
+    )}
+  </div>
+);
 };
 
 export default LiveRouteStatusBar;

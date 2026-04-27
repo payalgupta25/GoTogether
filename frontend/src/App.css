@@ -1,0 +1,16 @@
+/* <style jsx global>{` */
+  @keyframes gradient-xy {
+    0%, 100% { background-size: 400% 400%; background-position: 0% 50%; }
+    50% { background-size: 200% 200%; background-position: 100% 50%; }
+  }
+  .animate-gradient-xy {
+    animation: gradient-xy 5s ease infinite;
+  }
+
+  @keyframes route-flow {
+    to { stroke-dashoffset: -40; }
+  }
+  .animate-route-flow {
+    animation: route-flow 3s linear infinite;
+  }
+/* `}</style> */
