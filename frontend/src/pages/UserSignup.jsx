@@ -19,7 +19,6 @@ const UserSignup = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
     const newUser = { name, email, password, gender };
-
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/api/auth/signup`,

@@ -21,7 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // CORS configuration - MUST allow specific origin with credentials for preflight requests
 const corsOptions = {
-  origin: "http://localhost:5173",
+  origin: process.env.CLIENT_URL,
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
