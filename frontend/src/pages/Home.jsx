@@ -162,6 +162,7 @@ const Home = () => {
     } catch (err) { console.error("Logout failed", err); }
   };
 
+  console.log("API: ", API);
   const fetchData = useCallback(async () => {
     try {
       const [userRes, rideRes] = await Promise.all([
