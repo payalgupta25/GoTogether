@@ -14,7 +14,7 @@ const VerifyEmail = () => {
     setLoading(true);
     try {
       console.log(import.meta.env.VITE_BASE_URL);
-      const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/verifyEmail`, { code });
+      const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/verifyEmail`, { code }, { withCredentials: true });
       if (res.data.success) {
         toast.success(res.data.message);
         setTimeout(() => navigate("/vehicle-info"), 2000);

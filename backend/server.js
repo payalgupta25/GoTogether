@@ -20,16 +20,19 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // CORS configuration - MUST allow specific origin with credentials for preflight requests
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:5173",
+  process.env.CLIENT_URL,
+].filter(Boolean);
+
 const corsOptions = {
-  origin: ["http://localhost:5000",
-            "https://go-together-gamma.vercel.app"
-  ],
+  origin: allowedOrigins,
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
   optionsSuccessStatus: 200
 };
-
 // Apply CORS middleware
 app.use(cors(corsOptions));
 

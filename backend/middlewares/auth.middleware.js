@@ -1,57 +1,111 @@
+// import User from "../models/user.model.js";
+// import jwt from "jsonwebtoken";
+// import { transporter } from "../utils/email.config.js";
+// import { Verification_Email_Template,Welcome_Email_Template } from "../utils/emailTemplate.js";
+// export const protectRoute = async (req, res, next) => {
+//   try {
+//       const token = req.cookies.jwt || req.headers.authorization?.split(" ")[1] || req.cookies.token;
+//       console.log(token);
+//       if (!token) return res.status(401).json({ error: "Not authenticated" });
+
+//       const decoded = jwt.verify(token, process.env.JWT_SECRET);
+//       req.user = await User.findById(decoded.userId).select("-password");
+//       console.log("user",req.user);
+//       console.log("decoded",decoded.exp)
+//       if (!req.user) return res.status(404).json({ error: "User not found" });
+
+//       return next();
+//   } catch (error) {
+//       console.error("Auth error:", error);
+//       res.status(401).json({ error: "Invalid token" });
+//   }
+// };
+
+
+// export const sendVerificationEamil=async(email,verificationCode)=>{
+//   try {
+//    const response=   await transporter.sendMail({
+//           from: '"PAYAL GUPTA" <payalgupta425@gmail.com>',
+
+//           to: email, // list of receivers
+//           subject: "Verify your Email", // Subject line
+//           text: "Verify your Email", // plain text body
+//           html: Verification_Email_Template.replace("{verificationCode}",verificationCode)
+//       })
+//       console.log('Email send Successfully',response)
+//       return {success:true}
+//   } catch (error) {
+//       console.log('Verification Email error',error)
+//       return {success:false,message:error.message}
+//   }
+// }
+
+// export const senWelcomeEmail=async(email,name)=>{
+//   try {
+//    const response=   await transporter.sendMail({
+//           from: '"PAYAL GUPTA" <payalgupta425@gmail.com>',
+
+//           to: email, // list of receivers
+//           subject: "Welcome Email", // Subject line
+//           text: "Welcome Email", // plain text body
+//           html: Welcome_Email_Template.replace("{name}",name)
+//       })
+//       console.log('Email send Successfully',response)
+//   } catch (error) {
+//       console.log('Welcome Email error',error)
+//   }
+// }
+
+
 import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
-import { transporter } from "../utils/email.config.js";
-import { Verification_Email_Template,Welcome_Email_Template } from "../utils/emailTemplate.js";
+import { brevoClient, EMAIL_SENDER } from "../utils/email.config.js";
+import { Verification_Email_Template, Welcome_Email_Template } from "../utils/emailTemplate.js";
+
 export const protectRoute = async (req, res, next) => {
   try {
-      const token = req.cookies.jwt || req.headers.authorization?.split(" ")[1] || req.cookies.token;
-      console.log(token);
-      if (!token) return res.status(401).json({ error: "Not authenticated" });
+    const token = req.cookies.jwt || req.headers.authorization?.split(" ")[1];
+    if (!token) return res.status(401).json({ error: "Not authenticated" });
 
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = await User.findById(decoded.userId).select("-password");
-      console.log("user",req.user);
-      console.log("decoded",decoded.exp)
-      if (!req.user) return res.status(404).json({ error: "User not found" });
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = await User.findById(decoded.userId).select("-password");
+    if (!req.user) return res.status(404).json({ error: "User not found" });
 
-      return next();
+    return next();
   } catch (error) {
-      console.error("Auth error:", error);
-      res.status(401).json({ error: "Invalid token" });
+    console.error("Auth error:", error.message);
+    res.status(401).json({ error: "Invalid token" });
   }
 };
 
-
-export const sendVerificationEamil=async(email,verificationCode)=>{
+export const sendVerificationEamil = async (email, verificationCode) => {
   try {
-   const response=   await transporter.sendMail({
-          from: '"PAYAL GUPTA" <payalgupta425@gmail.com>',
+    const response = await brevoClient.transactionalEmails.sendTransacEmail({
+      sender: EMAIL_SENDER,
+      to: [{ email }],
+      subject: "Verify your Email",
+      htmlContent: Verification_Email_Template.replace("{verificationCode}", verificationCode),
+    });
 
-          to: email, // list of receivers
-          subject: "Verify your Email", // Subject line
-          text: "Verify your Email", // plain text body
-          html: Verification_Email_Template.replace("{verificationCode}",verificationCode)
-      })
-      console.log('Email send Successfully',response)
-      return {success:true}
+    console.log("Email sent successfully", response.messageId);
+    return { success: true };
   } catch (error) {
-      console.log('Verification Email error',error)
-      return {success:false,message:error.message}
+    console.log("Verification Email error", error.body || error.message);
+    return { success: false, message: error.body?.message || error.message };
   }
-}
+};
 
-export const senWelcomeEmail=async(email,name)=>{
+export const senWelcomeEmail = async (email, name) => {
   try {
-   const response=   await transporter.sendMail({
-          from: '"PAYAL GUPTA" <payalgupta425@gmail.com>',
+    const response = await brevoClient.transactionalEmails.sendTransacEmail({
+      sender: EMAIL_SENDER,
+      to: [{ email }],
+      subject: "Welcome Email",
+      htmlContent: Welcome_Email_Template.replace("{name}", name),
+    });
 
-          to: email, // list of receivers
-          subject: "Welcome Email", // Subject line
-          text: "Welcome Email", // plain text body
-          html: Welcome_Email_Template.replace("{name}",name)
-      })
-      console.log('Email send Successfully',response)
+    console.log("Email sent successfully", response.messageId);
   } catch (error) {
-      console.log('Welcome Email error',error)
+    console.log("Welcome Email error", error.body || error.message);
   }
-}
+};

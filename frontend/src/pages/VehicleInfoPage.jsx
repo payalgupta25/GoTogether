@@ -27,7 +27,7 @@ const VehicleInfoPage = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/vehicleInfo`, form);
+      const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/vehicleInfo`, form, { withCredentials: true });
       if (res.data.success) {
         toast.success("Vehicle info saved!");
         navigate("/home");

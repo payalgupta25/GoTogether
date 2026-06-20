@@ -189,24 +189,15 @@ export const verifyEmail = async (req, res) => {
 
 export const vehicleInfo = async (req, res) => {
   try {
-    const {email, numberPlate, vehicleType , fuelType  } = req.body;
-
-    const user = await User.findOne({ email }); // or use _id if you send it
+    const { numberPlate, vehicleType, fuelType } = req.body;
+    const user = await User.findById(req.user._id);  // req.user se, body se email nahi
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
-
-    user.vehicle = {
-      numberPlate,
-      type: vehicleType,
-      fuel:fuelType,
-    };
-
+    user.vehicle = { numberPlate, type: vehicleType, fuel: fuelType };
     await user.save();
-
     return res.status(200).json({ success: true, message: "Vehicle info saved successfully" });
   } catch (err) {
-    console.error("Vehicle info save error:", err);
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };
